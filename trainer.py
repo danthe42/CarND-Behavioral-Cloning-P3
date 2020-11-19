@@ -22,7 +22,7 @@ set_session(sess)                       # set this TensorFlow session as the def
 
 # ---------------------------------------------------------------------------------------
 # constants, parameters
-datadir = '../sampledata'
+datadir = '/opt/carnd_p3/data'      #../sampledata'
 dropout_rate = 0.2
 steering_correction = 0.2                                       # steering correction value for the side cameras
 batch_size=32                                                   # Set our batch size
