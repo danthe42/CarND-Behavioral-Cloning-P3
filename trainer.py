@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # ---------------------------------------------------------------------------------------
     datadir = args.image_folder
     model_filename = args.model
-    num_epochs = 3
+    num_epochs = 6
     dropout_rate = 0.2
     steering_correction = 0.1                                       # steering correction value for the side cameras
     batch_size=64                                                   # Set our batch size
@@ -115,7 +115,8 @@ if __name__ == '__main__':
                 for batch_sample in batch_samples:
                     i = random.randint(0,2)
                     #datadir+'/IMG/'+
-                    filename = batch_sample[i].split('/')[-1]
+                    #filename = batch_sample[i].split('/')[-1]
+                    filename = batch_sample[i]
                     im = Image.open( filename )
                     assert(im.mode == 'RGB')                # keras preprocess expects array in RGB order
 
@@ -126,8 +127,8 @@ if __name__ == '__main__':
                     # So: cut/resize the image to the expected size, but keep the aspect ratio
                     # the standard preprocess_input() will handle the normalization
                     camera_image = camera_image[ crop_top:screen_height-crop_bottom, crop_left:screen_width-crop_right, :]
-                    camera_image = np.pad(camera_image, ((109, 110),(0,0),(0,0)))
-
+                    camera_image = np.pad(camera_image, ((109, 110), (0, 0), (0, 0)), mode='constant')
+        
                     steering_dir = float(batch_sample[3])
 
                     # create adjusted steering measurements for the side camera images if necessary
@@ -182,5 +183,5 @@ if __name__ == '__main__':
     plt.ylabel('mean squared error loss')
     plt.xlabel('epoch')
     plt.legend(['training set', 'validation set'], loc='upper right')
-    plt.savefig('output_images/train_history.png', bbox_inches='tight')
+    plt.savefig('train_history.png', bbox_inches='tight')
     #plt.show()

@@ -58,6 +58,8 @@ imageid = 0
 
 @sio.on('telemetry')
 def telemetry(sid, data):
+    global imageid
+
     if data:
         # The current steering angle of the car
         steering_angle = data["steering_angle"]
@@ -74,7 +76,7 @@ def telemetry(sid, data):
         image_array = image_array[crop_top:screen_height - crop_bottom, crop_left:screen_width - crop_right, :]
         image_array = np.pad(image_array, ((109, 110), (0, 0), (0, 0)), mode='constant')
         camera_image_tosave = image_array
-
+        #print("input array shape: {}".format(image_array.shape))
         image_array = preprocess_input( image_array )
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
@@ -86,7 +88,7 @@ def telemetry(sid, data):
         if imageid  < 10:
             # atomic increment would be better, but it's not so critical
             imageid = imageid + 1
-            cv2.imwrite("cnninput{}.jpg".format(imageid), camera_image_tosave)
+            cv2.imwrite("cnninput{}.jpg".format(imageid), cv2.cvtColor(camera_image_tosave, cv2.COLOR_RGB2BGR))
 
         # save frame
         if args.image_folder != '':
