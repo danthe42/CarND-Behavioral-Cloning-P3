@@ -175,9 +175,6 @@ if __name__ == '__main__':
                         verbose=1)
     conv_model.save(model_filename)
 
-    ### print the keys contained in the history object
-    print(hist.history.keys())
-
     ### plot the training and validation loss for each epoch
     plt.plot(hist.history['loss'])
     plt.plot(hist.history['val_loss'])

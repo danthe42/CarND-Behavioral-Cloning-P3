@@ -2,6 +2,7 @@ import argparse
 import base64
 from datetime import datetime
 import os
+import cv2
 import shutil
 
 import numpy as np
@@ -51,6 +52,9 @@ controller = SimplePIController(0.1, 0.002)
 set_speed = 9
 controller.set_desired(set_speed)
 
+global imageid
+imageid = 0
+
 
 @sio.on('telemetry')
 def telemetry(sid, data):
@@ -64,10 +68,12 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
+        assert (image.mode == 'RGB')  # keras preprocess expects array in RGB order
 
         image_array = np.asarray(image)
         image_array = image_array[crop_top:screen_height - crop_bottom, crop_left:screen_width - crop_right, :]
         image_array = np.pad(image_array, ((109, 110), (0, 0), (0, 0)), mode='constant')
+        camera_image_tosave = image_array
 
         image_array = preprocess_input( image_array )
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
@@ -76,6 +82,11 @@ def telemetry(sid, data):
 
         print(steering_angle, throttle)
         send_control(steering_angle, throttle)
+
+        if imageid  < 10:
+            # atomic increment would be better, but it's not so critical
+            imageid = imageid + 1
+            cv2.imwrite("cnninput{}.jpg".format(imageid), camera_image_tosave)
 
         # save frame
         if args.image_folder != '':
