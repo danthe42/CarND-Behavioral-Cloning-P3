@@ -50,17 +50,12 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 20
-#set_speed = 9
+#set_speed = 20
+set_speed = 9
 controller.set_desired(set_speed)
-
-global imageid
-imageid = 0
-
 
 @sio.on('telemetry')
 def telemetry(sid, data):
-    global imageid
 
     if data:
         # The current steering angle of the car
@@ -84,11 +79,6 @@ def telemetry(sid, data):
 
         print(steering_angle, throttle)
         send_control(steering_angle, throttle)
-
-        if imageid  < 10:
-            # atomic increment would be better, but it's not so critical
-            imageid = imageid + 1
-            cv2.imwrite("cnninput{}.jpg".format(imageid), cv2.cvtColor(camera_image_tosave, cv2.COLOR_RGB2BGR))
 
         # save frame
         if args.image_folder != '':

@@ -30,7 +30,7 @@ straightdropprobability = 0.10          # drop this many percent of images with 
 toolowspeedlimit = 6.                   # drop the camera images below this speed (the car is too slow, steeering value is not too useful)
 steering_correction = 0.2               # steering correction value for the side cameras
 distortedimageaddprobability = 0.35     # parameter, should be tuned
-num_epochs = 24
+num_epochs = 10
 dropout_rate = 0.2
 batch_size = 256  # Set our batch size
 

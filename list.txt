@@ -1,0 +1,5 @@
+/home/opt/1
+/home/opt/2
+/home/opt/3
+/home/opt/4
+/home/opt/5
