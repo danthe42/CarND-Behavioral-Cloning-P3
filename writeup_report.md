@@ -103,11 +103,13 @@ The overall strategy for deriving a model architecture was:
 
 The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track or took a  wrong maneuver. To improve the driving behavior in these cases, I recorded short clips around that area taking that specific maneuver multiple times, then trained the network with it.  
 
+After training on the data of one track, I usually encountered with the problem that the network "forgot" how to drive on the other track. As a solution, I've used data points from different driving logs, mainly with data from both tracks in the training dataset. It works, because thedata points are completely independent of each other, so they could be mixed, or shuffled.  
+
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 213-247) consisted of a convolution neural network with the following layers and layer sizes:
+The final model architecture (model.py lines 213-247) consisted of a convolutional neural network with the following layers and layer sizes:
 
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #
@@ -168,7 +170,9 @@ I then recorded the vehicle recovering from the left side and right sides of the
 
 Then I repeated this process on track two in order to get more data points.
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+I'm using image cropping and remove the top 50 pixels and the bottom 20 pixels from the camera image, because they do not contain any important part of the road, just the car's hood and the sky, hills, trees, etc. which would just confuse the neural network.    
+
+To augment the data sat, I also flipped all images horizontally, this doubles the number of data points.... For example, here is an image that has then been flipped:
 
 
 
@@ -176,13 +180,13 @@ To augment the data sat, I also flipped images and angles thinking that this wou
 
 ![alt text][image7]
 
-A generated, rotated image:
+Then I'm using a random, small rotation factor, like this::
 
 ![alt text][image8]
 
 ![alt text][image9]
 
-A generated image, before and after the brightness modification:
+And the second augmentation type: Here's a generated image before, and after brightness modification:
 
 ![alt text][image10]
 
@@ -192,11 +196,14 @@ A generated image, before and after the brightness modification:
 
 
 
-After the collection and dynamic generation process, I had enough data points to use for the training.
+After the collection and the dynamic generation process, I had enough data points to use for the training.
 
 
-But first, I split the complete data set and put 10% of the data into a validation set. The remaining 90% is the training set, I've used this data set for training the model. The validation set helped determine if the model was over or under fitting. I used an adam optimizer so that manually training the learning rate wasn't necessary. I chose 24 as the number of epochs, and got this result:
+But first, I split the complete data set and put 10% of the data into a validation set. The remaining 90% is the training set, I've used this data set for training the model. I did not use test scoring at the end of the training process, so there is no test set. The validation set helped determine if the model was over or under fitting. I used an adam optimizer so that manually training the learning rate wasn't necessary. I chose 24 as the number of epochs, and got this result:
 
 ![alt text][image12]
 
-Probably the number of epochs was too big, as the training set's results didn't improve too much after epoch#15. Moreover the validation set's mean error was not really decreasing after epoch#14. Probably 15 epochs would have been enough. Anyway, the resulting network was able to navigate on both tracks in the simulator with the speed of 20 mph, which I consider an excellent result. 
+Probably the number of epochs was too big, as the training set's results didn't improve too much after epoch#15. Moreover the validation set's mean error was not really decreasing after epoch#14. Probably 15 epochs would have been enough. Anyway, the resulting network was able to navigate on both tracks in the simulator, and I consider that an excellent result.
+
+At the end of each training process, that graph above with mean squared error loss at the end of each epoch is written into the same directory as "train_history_<date/time>.png". It helps to tune the number of epochs parameter correctly, and can help to identify when the system is under/overfitting.   
+
