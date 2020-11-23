@@ -16,8 +16,7 @@ The goals / steps of this project are the following:
 
 [//]: # "Image References"
 
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
+[image2]: ./output_images/center_2020_11_22_21_29_38_193.jpg "Centerline driving sample"
 [image3]: ./examples/placeholder_small.png "Recovery Image"
 [image4]: ./examples/placeholder_small.png "Recovery Image"
 [image5]: ./examples/placeholder_small.png "Recovery Image"
