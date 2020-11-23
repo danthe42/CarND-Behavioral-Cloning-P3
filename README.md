@@ -10,7 +10,7 @@ In this project, you will use what you've learned about deep neural networks and
 
 We have provided a simulator where you can steer a car around a track for data collection. You'll use image data and steering angles to train a neural network and then use this model to drive the car autonomously around the track.
 
-There are more details about the used approach, the model architecture, the pipeline design and it's implementation details, and the usage of the training data in the project writeup document here: [project_writeup](https://github.com/danthe42/CarND-Behavioral-Cloning-P3/blob/master/writeup.md)
+There are more details about the used approach, the model architecture, the pipeline design and it's implementation details, and the usage of the training data in the project writeup document here: [project_writeup](https://github.com/danthe42/CarND-Behavioral-Cloning-P3/blob/master/writeup_report.md)
 
 Also, the source codes are well documented by using comments, they describe the main stages and procedures in the pipeline.
 

@@ -160,7 +160,7 @@ To capture good driving behavior, I first recorded two laps on track one using c
 
 ![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to keep close to the center of the road.
+Then I recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to keep close to the center of the road.
 
 ![alt text][image3]
 
@@ -170,7 +170,7 @@ I then recorded the vehicle recovering from the left side and right sides of the
 
 Then I repeated this process on track two in order to get more data points.
 
-I'm using image cropping and remove the top 50 pixels and the bottom 20 pixels from the camera image, because they do not contain any important part of the road, just the car's hood and the sky, hills, trees, etc. which would just confuse the neural network.    
+I'm using image cropping and remove the upper 50 pixels and the lower 20 pixels from the camera image, because they do not contain any important part of the road, just the car's hood and the sky, hills, trees, etc. which would just confuse the neural network.    
 
 To augment the data sat, I also flipped all images horizontally, this doubles the number of data points.... For example, here is an image that has then been flipped:
 
@@ -199,7 +199,7 @@ And the second augmentation type: Here's a generated image before, and after bri
 After the collection and the dynamic generation process, I had enough data points to use for the training.
 
 
-But first, I split the complete data set and put 10% of the data into a validation set. The remaining 90% is the training set, I've used this data set for training the model. I did not use test scoring at the end of the training process, so there is no test set. The validation set helped determine if the model was over or under fitting. I used an adam optimizer so that manually training the learning rate wasn't necessary. I chose 24 as the number of epochs, and got this result:
+But first, I split the complete data set and put 15% of the data into a validation set. The remaining 85% is the training set, I've used this data set for training the model. I did not use test scoring at the end of the training process, so there is no test set. The validation set helped determine if the model was over or under fitting. I used an adam optimizer so that manually training the learning rate wasn't necessary. I chose 24 as the number of epochs, and got this result:
 
 ![alt text][image12]
 
