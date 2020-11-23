@@ -12,18 +12,19 @@ import eventlet.wsgi
 from PIL import Image
 from flask import Flask
 from io import BytesIO
+import tensorflow as tf
 
 from keras.models import load_model
 import h5py
 from keras import __version__ as keras_version
-from keras.applications.inception_v3 import preprocess_input
+from keras.backend.tensorflow_backend import set_session
 
 sio = socketio.Server()
 app = Flask(__name__)
 model = None
 prev_image_array = None
-crop_top, crop_bottom = 60, 20
-crop_left, crop_right = 10, 11
+crop_top, crop_bottom = 50, 20
+crop_left, crop_right = 0, 0
 screen_width = 320
 screen_height = 160
 
@@ -49,7 +50,8 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 14
+set_speed = 20
+#set_speed = 9
 controller.set_desired(set_speed)
 
 global imageid
@@ -73,11 +75,9 @@ def telemetry(sid, data):
         assert (image.mode == 'RGB')  # keras preprocess expects array in RGB order
 
         image_array = np.asarray(image)
-        image_array = image_array[crop_top:screen_height - crop_bottom, crop_left:screen_width - crop_right, :]
-        image_array = np.pad(image_array, ((109, 110), (0, 0), (0, 0)), mode='constant')
+        image_array = image_array[crop_top:screen_height - crop_bottom, :, :]
         camera_image_tosave = image_array
-        #print("input array shape: {}".format(image_array.shape))
-        image_array = preprocess_input( image_array )
+
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
         throttle = controller.update(float(speed))
@@ -131,6 +131,12 @@ if __name__ == '__main__':
         help='Path to image folder. This is where the images from the run will be saved.'
     )
     args = parser.parse_args()
+
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+    #config.log_device_placement = True      # to log device placement (on which device the operation ran)
+    sess = tf.Session(config=config)
+    set_session(sess)                       # set this TensorFlow session as the default session for Keras
 
     # check that model Keras version is same as local Keras version
     f = h5py.File(args.model, mode='r')

@@ -17,13 +17,21 @@ The goals / steps of this project are the following:
 [//]: # "Image References"
 
 [image2]: ./output_images/center_2020_11_22_21_29_38_193.jpg "Centerline driving sample"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image3]: ./output_images/center_2020_11_21_10_48_28_628.jpg "Recovery Image"
+[image4]: ./output_images/center_2020_11_21_10_48_29_369.jpg "Recovery Image"
+[image5]: ./output_images/center_2020_11_21_10_48_29_660.jpg "Recovery Image"
+[image6]: ./output_images/sampleimg.jpg "Normal Image"
+[image8]: ./output_images/original_img_97.jpg "Original"
+[image9]: ./output_images/distorted_img_97.jpg "Distorted (rotated)"
+[image10]: ./output_images/original_img_54.jpg "Original"
+[image11]: ./output_images/distorted_img_54.jpg "Distorted (Brightness modification)"
+[image12]: ./output_images/train_history_2020_11_23_19_13_58_412.png "train results"
+[image7]: ./output_images/sampleimg_flipped.jpg "Flipped Image"
+
+
 
 ## Rubric Points
+
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
@@ -55,7 +63,7 @@ My model first preprocesses the data using a Keras lambda layer (code line 216).
 
 After this first layer, there comes three 2D convolution layers with 7x7, 5x5 and 3x3 filter sizes, (4,4), (2,2) and (1,1)  strides and depths:  32, 64 and 128. (model.py lines 213-247) 
 
-After flattening the 3rd convolutional layer's output, 3 fully connected layers are following with sizes: 256,128, and 1. The network has only one output value, the output of the last TANH activation function in the interval ]-1, 1[ and that is the steering wheel's desired angle. 
+After flattening the 3rd convolutional layer's output, 3 fully connected layers are following with sizes: 384, 384, and 1. The network has only one output value, the output of the last TANH activation function in the interval ]-1, 1[ and that is the steering wheel's desired angle. 
 
 The model includes RELU layers as the activation function after the wide fully connected layers, and TANH activation after the convolutional, and the last fully connected layers. 2. Attempts to reduce overfitting in the model
 
@@ -118,25 +126,25 @@ batch_normalization_2(Batch) 			(None, 6, 20, 64)         256
 _________________________________________________________________
 max_pooling2d_2(MaxPooling2) 		 (None, 3, 10, 64)         0
 _________________________________________________________________
-conv2d_3 (Conv2D)            				 (None, 3, 10, 128)        73856
+conv2d_3 (Conv2D)            				  (None, 3, 10, 96)         55392
 _________________________________________________________________
-batch_normalization_3 					    (Batch (None, 3, 10, 128)        512
+batch_normalization_3(Batch) 			 (None, 3, 10, 96)         384
 _________________________________________________________________
-flatten_1 (Flatten)          					   (None, 3840)              0
+flatten_1 (Flatten)          					   (None, 2880)              0
 _________________________________________________________________
-dense_1(Dense)             					 (None, 256)               983296
+dense_1 (Dense)             					 (None, 384)               1106304
 _________________________________________________________________
-batch_normalization_4 (Batch) 		   (None, 256)               1024
+batch_normalization_4(Batch) 			 (None, 384)               1536
 _________________________________________________________________
-dropout_1 (Dropout)          				   (None, 256)               0
+dropout_1 (Dropout)          				   (None, 384)               0
 _________________________________________________________________
-dense_2 (Dense)              					(None, 128)               32896
+dense_2 (Dense)              					(None, 384)               147840
 _________________________________________________________________
-batch_normalization_5(Batch) 			(None, 128)               512
+batch_normalization_5(Batch) 			 (None, 384)               1536
 _________________________________________________________________
-dropout_2 (Dropout)          				  (None, 128)               0
+dropout_2 (Dropout)          				   (None, 384)               0
 _________________________________________________________________
-dense_3 (Dense)              				  (None, 1)                 129
+dense_3 (Dense)              				    (None, 1)                 385
 
 Total params: 1,148,609
 Trainable params: 1,147,393
@@ -150,24 +158,45 @@ To capture good driving behavior, I first recorded two laps on track one using c
 
 ![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to keep close to the center of the road.
 
 ![alt text][image3]
+
 ![alt text][image4]
+
 ![alt text][image5]
 
 Then I repeated this process on track two in order to get more data points.
 
 To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
 
+
+
 ![alt text][image6]
+
 ![alt text][image7]
 
-Etc ....
+A generated, rotated image:
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+![alt text][image8]
+
+![alt text][image9]
+
+A generated image, before and after the brightness modification:
+
+![alt text][image10]
+
+![alt text][image11]
 
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+
+
+After the collection and dynamic generation process, I had enough data points to use for the training.
+
+
+But first, I split the complete data set and put 10% of the data into a validation set. The remaining 90% is the training set, I've used this data set for training the model. The validation set helped determine if the model was over or under fitting. I used an adam optimizer so that manually training the learning rate wasn't necessary. I chose 24 as the number of epochs, and got this result:
+
+![alt text][image12]
+
+Probably the number of epochs was too big, as the training set's results didn't improve too much after epoch#15. Moreover the validation set's mean error was not really decreasing after epoch#14. Probably 15 epochs would have been enough. Anyway, the resulting network was able to navigate on both tracks in the simulator with the speed of 20 mph, which I consider an excellent result. 
